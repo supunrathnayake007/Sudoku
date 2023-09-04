@@ -1,0 +1,7 @@
+intermediate level sudoku solved successfully (it took 4 days of thinking) 23*07*05
+
+other steps needed
+    sudoku have to save in sqlite db
+    need a way to add new sudoku
+
+    may be onaday web interface
