@@ -1,74 +1,34 @@
+def solve_sudoku(my_list: list, pv_list: list, testing_mode: bool) -> list:
 
-def create_blankGrid() -> list:
-    main_list = []
-    for i in range(0, 9):
-        main_list.append([0, 0, 0, 0, 0, 0, 0, 0, 0])
-    return main_list
+    def count_possibleValues(pv_list: list) -> int:
+        count = 0
+        for i in range(0, 9):
+            for j in range(0, 9):
+                for k in pv_list[i][j]:
+                    if k > 0:
+                        count = count+1
+        return count
 
+    key_value = count_possibleValues(pv_list)
+    while 1 == 1:
+        pv_list = removeIVF_pvTemplate(my_list, pv_list)
+        key = count_possibleValues(pv_list)
 
-def tupleOfTuplesTo_listOfLists(my_tuple: tuple) -> list:
+        my_list = insert_valuesWTOOPA(my_list, pv_list)
+        if key_value == key:
+            if key != 0:
+                if testing_mode == True:
+                    print("*** Sudoku is not solved!! :( ***")
+                    user_input = input(
+                        '        press V for View possible Values grid data: ')
+                    if user_input.lower() == 'v':
+                        print_pvData(my_list, pv_list)
 
-    main_list = []
-    for i in range(0, 9):
-        sub_list = []
-        for j in range(0, 9):
-            sub_list.append(my_tuple[i][j])
-        main_list.append(sub_list)
+            break
+        else:
+            key_value = key
 
-    return main_list
-
-
-def print_myGrid(main_list: list):
-    i = 0
-    while i < 9:
-        j = 0
-        line_str = ""
-        while j < 9:
-            line_str = line_str + str(main_list[i][j])
-            if j == 2 or j == 5 or j == 8:
-                line_str = line_str + "  "
-            else:
-                line_str = line_str + ", "
-            j = j+1
-        if i == 3 or i == 6 or i == 9:
-            print("")
-        print(line_str)
-        i = i+1
-
-
-def add_clues(main_list: list) -> list:
-    main_list[0][3] = 9
-    main_list[1][0] = 2
-    main_list[1][2] = 4
-    main_list[1][4] = 5
-    main_list[1][6] = 8
-    main_list[1][8] = 7
-    main_list[2][1] = 7
-    main_list[2][4] = 8
-    main_list[2][5] = 3
-    main_list[2][7] = 4
-    main_list[3][0] = 8
-    main_list[3][6] = 9
-    main_list[4][0] = 9
-    main_list[4][1] = 1
-    main_list[4][6] = 3
-    main_list[4][7] = 5
-    main_list[5][0] = 4
-    main_list[5][2] = 2
-    main_list[5][6] = 6
-    main_list[5][8] = 8
-    main_list[6][3] = 7
-    main_list[7][0] = 1
-    main_list[7][2] = 8
-    main_list[7][4] = 9
-    main_list[7][6] = 7
-    main_list[7][8] = 6
-    main_list[8][1] = 3
-    main_list[8][4] = 1
-    main_list[8][5] = 2
-    main_list[8][7] = 9
-
-    return main_list
+    return my_list
 
 
 def guess_possibleValues(main_list: list, row: int, col: int, possible_values: list) -> list:
@@ -111,19 +71,7 @@ def guess_possibleValues(main_list: list, row: int, col: int, possible_values: l
     return possible_values
 
 
-def generate_pvTemplate() -> list:
-    # Generate passible value template list
-    pv_list = []
-    for i in range(0, 9):
-        pv_list.append([])
-        for j in range(0, 9):
-            pv_list[i].append([1, 2, 3, 4, 5, 6, 7, 8, 9])
-
-    return pv_list
-
 # insert values When There Only One Possible Value Available
-
-
 def insert_valuesWTOOPA(main_list: list, pv_list: list) -> list:
     # insert values When There Only One Possible Value Available
     for i in range(0, 9):
@@ -132,9 +80,8 @@ def insert_valuesWTOOPA(main_list: list, pv_list: list) -> list:
                 main_list[i][j] = pv_list[i][j][0]
     return main_list
 
+
 # remove impossible values from the pvTemplate
-
-
 def removeIVF_pvTemplate(main_list: list, pv_list: list) -> list:
     def get_range(index: int) -> list:
         if index < 3 and index > -1:
@@ -217,49 +164,6 @@ def removeIVF_pvTemplate(main_list: list, pv_list: list) -> list:
     #         elif have_values==8:
 
     return pv_list
-
-
-def solve_sudoku(my_list: list, pv_list: list, testing_mode: bool) -> list:
-
-    def count_possibleValues(pv_list: list) -> int:
-        count = 0
-        for i in range(0, 9):
-            for j in range(0, 9):
-                for k in pv_list[i][j]:
-                    if k > 0:
-                        count = count+1
-        return count
-
-    key_value = count_possibleValues(pv_list)
-    while 1 == 1:
-        pv_list = removeIVF_pvTemplate(my_list, pv_list)
-        key = count_possibleValues(pv_list)
-
-        my_list = insert_valuesWTOOPA(my_list, pv_list)
-        if key_value == key:
-            if key != 0:
-                if testing_mode == True:
-                    print("*** Sudoku is not solved!! :( ***")
-                    user_input = input(
-                        '        press V for View possible Values grid data: ')
-                    if user_input.lower() == 'v':
-                        print_pvData(my_list, pv_list)
-
-            break
-        else:
-            key_value = key
-
-    return my_list
-
-
-def print_pvData(main_list: list, pv_list: list):
-    for i in range(0, 9):
-        print('row:'+str(i))
-        for j in range(0, 9):
-            if main_list[i][j] > 0:
-                continue
-            print('     col:'+str(j)+' val:' + ' pv:'+str(pv_list[i][j]))
-        print()
 
 
 # my_list = create_blankGrid()

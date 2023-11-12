@@ -1,4 +1,5 @@
 import functions
+import FunctionSupport
 from DBAccess.sqliteAccess import SqliteAccess
 foo = SqliteAccess()
 foo.create_db()
@@ -43,7 +44,7 @@ while True:
         r = input('    This is factory insert. want to proceed (y/n)?')
         if r.lower() == 'y':
             myList = functions.create_blankGrid()
-            myList = functions.add_clues(myList)
+            myList = FunctionSupport.add_clues(myList)
             foo.insert_sudokuFromList(myList, 'first_sudoku')
 
     if answer.lower() == 'v':
