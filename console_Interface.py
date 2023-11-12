@@ -1,8 +1,8 @@
 import functions
-from sqliteAccess import SqliteAccess
+from DBAccess.sqliteAccess import SqliteAccess
 foo = SqliteAccess()
 foo.create_db()
-
+#
 print()
 print('******************************************************')
 print('*********Welcome to Sudoku solving program************')
