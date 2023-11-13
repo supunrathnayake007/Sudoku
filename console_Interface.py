@@ -1,5 +1,7 @@
 import functions
-import FunctionSupport
+import FunctionSupport.basic_grid_control
+import FunctionSupport.test_sudoku_data
+
 from DBAccess.sqliteAccess import SqliteAccess
 foo = SqliteAccess()
 foo.create_db()
@@ -56,7 +58,8 @@ while True:
             s_id = input('    enter sudoku number >> ')
             print()
             sudokuData = foo.get_sudokuFromLines(s_id)
-            my_list = functions.tupleOfTuplesTo_listOfLists(sudokuData)
+            my_list = FunctionSupport.basic_grid_control.tuple_to_List_twoD(
+                sudokuData)
             functions.print_myGrid(my_list)
             print()
             print('     S - for solve')
@@ -65,9 +68,8 @@ while True:
             print()
             user_input = input('     >> ')
             if user_input.lower() == 's':
-                pv_list = functions.generate_pvTemplate()
-                my_list = functions.solve_sudoku(my_list, pv_list, True)
-                functions.print_myGrid(my_list)
+                my_list = functions.solve_sudoku(my_list, True)
+                FunctionSupport.basic_grid_control.print_grid(my_list)
                 print()
                 print('     B - Back')
                 print('     M - Main menu')

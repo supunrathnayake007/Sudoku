@@ -7,7 +7,7 @@ def create_blank_grid() -> list:
     return main_list
 
 
-def all_possible_values_grid() -> list:
+def new_possible_values_grid() -> list:
     # this is a 3d(9x9x9) list contains all possible values for each cell in sudoku grid
     # old name - generate_pvTemplate
     pv_list = []

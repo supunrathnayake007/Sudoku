@@ -1,34 +1,40 @@
-def solve_sudoku(my_list: list, pv_list: list, testing_mode: bool) -> list:
+import FunctionSupport.basic_grid_control
 
-    def count_possibleValues(pv_list: list) -> int:
-        count = 0
-        for i in range(0, 9):
-            for j in range(0, 9):
-                for k in pv_list[i][j]:
-                    if k > 0:
-                        count = count+1
-        return count
 
-    key_value = count_possibleValues(pv_list)
+def solve_sudoku(my_list: list, testing_mode: bool) -> list:
+
+    possible_values = FunctionSupport.basic_grid_control.new_possible_values_grid()
+
     while 1 == 1:
-        pv_list = removeIVF_pvTemplate(my_list, pv_list)
-        key = count_possibleValues(pv_list)
+        before_count = _count_possibleValues(possible_values)
+        possible_values = removeIVF_pvTemplate(my_list, possible_values)
+        after_count = _count_possibleValues(possible_values)
 
-        my_list = insert_valuesWTOOPA(my_list, pv_list)
-        if key_value == key:
-            if key != 0:
+        my_list = insert_valuesWTOOPA(my_list, possible_values)
+        if before_count == after_count:
+            if after_count != 0:
                 if testing_mode == True:
                     print("*** Sudoku is not solved!! :( ***")
                     user_input = input(
                         '        press V for View possible Values grid data: ')
                     if user_input.lower() == 'v':
-                        print_pvData(my_list, pv_list)
+                        print_pvData(my_list, possible_values)
 
             break
         else:
-            key_value = key
+            before_count = after_count
 
     return my_list
+
+
+def _count_possibleValues(pv_list: list) -> int:
+    count = 0
+    for i in range(0, 9):
+        for j in range(0, 9):
+            for k in pv_list[i][j]:
+                if k > 0:
+                    count = count+1
+    return count
 
 
 def guess_possibleValues(main_list: list, row: int, col: int, possible_values: list) -> list:
