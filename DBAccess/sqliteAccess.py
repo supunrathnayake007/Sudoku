@@ -3,7 +3,7 @@ import sqlite3
 
 class SqliteAccess:
     def __init__(self):
-        self.conn = sqlite3.connect('data.db')
+        self.conn = sqlite3.connect('DBAccess/data.db')
         self.c = self.conn.cursor()
         self.create_db()
 

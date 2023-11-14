@@ -3,7 +3,7 @@ import sqlite3
 
 class Sudoku_db:
     def __init__(self) -> None:
-        self.conn = sqlite3.connect('sudoku.db')
+        self.conn = sqlite3.connect('DBAccess/sudoku.db')
         self.c = self.conn.cursor()
         self.create_db()
 

@@ -45,7 +45,7 @@ while True:
     if answer.lower() == 'fi':
         r = input('    This is factory insert. want to proceed (y/n)?')
         if r.lower() == 'y':
-            myList = functions.create_blankGrid()
+            myList = FunctionSupport.basic_grid_control.create_blank_grid()
             myList = FunctionSupport.add_clues(myList)
             foo.insert_sudokuFromList(myList, 'first_sudoku')
 
@@ -60,7 +60,7 @@ while True:
             sudokuData = foo.get_sudokuFromLines(s_id)
             my_list = FunctionSupport.basic_grid_control.tuple_to_List_twoD(
                 sudokuData)
-            functions.print_myGrid(my_list)
+            FunctionSupport.basic_grid_control.print_grid(my_list)
             print()
             print('     S - for solve')
             print('     B - Back')

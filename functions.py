@@ -4,14 +4,14 @@ import FunctionSupport.basic_grid_control
 def solve_sudoku(my_list: list, testing_mode: bool) -> list:
 
     possible_values = FunctionSupport.basic_grid_control.new_possible_values_grid()
-    possible_values = remove_unnecessary_possible_values(
-        my_list, possible_values)
 
     while 1 == 1:
-        before_count = _count_possibleValues(possible_values)
+        before_count = _count_possible_values(possible_values)
+        possible_values = remove_unnecessary_possible_values(
+            my_list, possible_values)
         # this is where most of the work done
         possible_values = removeIVF_pvTemplate(my_list, possible_values)
-        after_count = _count_possibleValues(possible_values)
+        after_count = _count_possible_values(possible_values)
 
         my_list = _insert_valuesWTOOPA(
             my_list, possible_values)  # this is a small one
@@ -22,11 +22,13 @@ def solve_sudoku(my_list: list, testing_mode: bool) -> list:
                     user_input = input(
                         '        press V for View possible Values grid data: ')
                     if user_input.lower() == 'v':
-                        print_pvData(my_list, possible_values)
+                        FunctionSupport.basic_grid_control.print_possible_values(
+                            my_list, possible_values)
+                return my_list
 
             break
         else:
-            before_count = after_count
+            before_count = after_count  # no need now
 
     return my_list
 
@@ -38,6 +40,8 @@ def remove_unnecessary_possible_values(main_list: list, possible_values: list) -
     # like if there value in the main grid then that value doesn't need to be possible value in the entire row column and 3x3 cell
     # its like a cleaning remaining unnecessary possible values
 
+    # this is like the step one to remove unnecessary possible values
+
     for row in range(0, 9):
         for col in range(0, 9):
             # pv_list[row][col] = guess_possibleValues(
@@ -47,6 +51,8 @@ def remove_unnecessary_possible_values(main_list: list, possible_values: list) -
             # because it already have a value no need any checking
             # to think - we also can remove all the possible values, may be assign 0
             if main_list[row][col] > 0:
+                # this will remove unnecessary possible values then there already certain values exist
+                possible_values[row][col] = []
                 continue
 
             # this check the entire column and remove unnecessary possible values
@@ -82,18 +88,15 @@ def remove_unnecessary_possible_values(main_list: list, possible_values: list) -
 def removeIVF_pvTemplate(main_list: list, pv_list: list) -> list:
     # new name - filter_possible_values
 
-    # this filter out possible values for selected cell,  it check the row , column and 3x3 cell for filter out
-    # for row in range(0, 9):
-    #     for col in range(0, 9):
-    #         pv_list[row][col] = guess_possibleValues(
-    #             main_list, row, col, pv_list[row][col])
-
     # description 1 - this is another major rule or strategy for set the values - when there possible value is uniq to its row , column or 3x3cel
     # even other possible values existed, then that uniq value is the value should be
     #  description 2 - rule-4 set the value when there only one selected pv exist in the raw or column(cell can have more pv but,)
     # selected pv is the only one for the raw or column
     for row in range(0, 9):  # i is row
         for col in range(0, 9):  # j is column
+
+            if len(pv_list[row][col]) == 1:
+                continue
             # k is selected possible value itself
             for possible_value in pv_list[row][col]:
 
@@ -173,7 +176,7 @@ def removeIVF_pvTemplate(main_list: list, pv_list: list) -> list:
     return pv_list
 
 
-def _count_possibleValues(pv_list: list) -> int:
+def _count_possible_values(pv_list: list) -> int:
     count = 0
     for i in range(0, 9):
         for j in range(0, 9):
