@@ -19,11 +19,18 @@ def solve_sudoku(my_list: list, testing_mode: bool) -> list:
             if after_count != 0:
                 if testing_mode == True:
                     print("*** Sudoku is not solved!! :( ***")
-                    user_input = input(
-                        '        press V for View possible Values grid data: ')
-                    if user_input.lower() == 'v':
-                        FunctionSupport.basic_grid_control.print_possible_values(
-                            my_list, possible_values)
+                    FunctionSupport.basic_grid_control.print_possible_values(
+                        my_list, possible_values)
+                    print("         suggest a value")
+                    # if user_input.lower() == 'v':
+
+                    if user_input.lower() == 's':
+                        row_s = input('             Row index:')
+                        col_s = input('             column index:')
+                        value_s = input('             Value:')
+                        my_list[int(row_s)][int(col_s)] = int(value_s)
+                        continue
+
                 return my_list
 
             break
@@ -207,6 +214,18 @@ def _get_range(index: int) -> list:
         return [6, 7, 8]
 
 
+def _check_main_list_complete(main_list: list) -> bool:
+    # this method to check actually main list got fixed
+    # because possible values list count can goto 0 with bad suggestions and still main list can be not fixed
+    # so this check the main list is there any o values, if there is its not fixed , if there isn't its fixed
+
+    for row in range(0, 9):
+        for col in range(0, 9):
+            if main_list[row][col] == 0:
+                return False
+    return True
+
+
 # my_list = create_blankGrid()
 # my_list = add_clues(my_list)
 # print_myGrid(my_list)
@@ -217,3 +236,44 @@ def _get_range(index: int) -> list:
 
 # print("")
 # print_myGrid(my_list)
+
+
+def lets_brute_force(main_list: list, possible_values: list) -> list:
+    # in this list first (0) index is like column heder in table
+    # and this is where im gonna track every step
+    _brute_history = ["step_id", "main_list", "possible_values",
+                      "suggesting value", "row_index", "column_index"]
+    _step_id = 0
+
+    while 1 == 1:
+
+        _track_back = False
+
+        for row in range(0, 9):
+            for col in range(0, 9):
+
+                for possible_value in possible_values[row][col]:
+                    if main_list[row][col] == 0:
+                        _step_id = _step_id+1  # this will increase the step number
+                        _brute_history.append(
+                            [_step_id, main_list, possible_values, possible_value, row, col])  # saving data before make change
+
+                        # making the suggestion without knowing right or wrong
+                        main_list[row][col] = possible_value
+                        # remove other possible values , those doesn't matter anymore
+                        possible_values[row][col] = possible_value
+                        possible_values = remove_unnecessary_possible_values(
+                            main_list, possible_values)  # cleaning up other possible values according to our change
+
+                    break  # need to run one time
+
+        if (_track_back):
+            for history in _brute_history:
+                break
+
+        # main while loop stops only when possible values count become 0
+        # this should be the end of the this method
+        if (_count_possible_values(possible_value) == 0):
+            return main_list
+
+    return [0]
