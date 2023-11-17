@@ -1,46 +1,52 @@
 import FunctionSupport.basic_grid_control
 
 
-def solve_sudoku(my_list: list, testing_mode: bool) -> list:
+def solve_sudoku(my_list: list):
+    _result = dict()
 
     possible_values = FunctionSupport.basic_grid_control.new_possible_values_grid()
+    _result = _apply_basic_rules(my_list, possible_values)
 
+    return _result
+
+
+def _apply_basic_rules(main_list: list, possible_values: list):
+    # main_list - means list that contain sudoku grid data. its 9x9 2d list (nine of lists that contain nine values)
+    # this method handle to possible values filters and return stats
+    _result = dict()
     while 1 == 1:
         before_count = _count_possible_values(possible_values)
-        possible_values = remove_unnecessary_possible_values(
-            my_list, possible_values)
+        possible_values = _unnecessary_possible_values_filter(
+            main_list, possible_values)
         # this is where most of the work done
-        possible_values = removeIVF_pvTemplate(my_list, possible_values)
+        possible_values = _advanced_possible_values_filter(
+            main_list, possible_values)
         after_count = _count_possible_values(possible_values)
 
-        my_list = _insert_valuesWTOOPA(
-            my_list, possible_values)  # this is a small one
+        main_list = _insert_single_values_to_main(
+            main_list, possible_values)  # this is a small one
         if before_count == after_count:
             if after_count != 0:
-                if testing_mode == True:
-                    print("*** Sudoku is not solved!! :( ***")
-                    FunctionSupport.basic_grid_control.print_possible_values(
-                        my_list, possible_values)
-                    print("         suggest a value")
-                    # if user_input.lower() == 'v':
+                # sudoku is failed to solve
+                _result['is_pv_count_0'] = False
+                _result['is_solved'] = False
 
-                    if user_input.lower() == 's':
-                        row_s = input('             Row index:')
-                        col_s = input('             column index:')
-                        value_s = input('             Value:')
-                        my_list[int(row_s)][int(col_s)] = int(value_s)
-                        continue
-
-                return my_list
+                return _result
+            else:
+                _result['is_pv_count_0'] = True
+                _result['is_solved'] = _check_main_list_solved(main_list)
 
             break
         else:
             before_count = after_count  # no need now
 
-    return my_list
+    _result['main_grid'] = main_list
+    _result['possible_values'] = possible_values
+
+    return _result
 
 
-def remove_unnecessary_possible_values(main_list: list, possible_values: list) -> list:
+def _unnecessary_possible_values_filter(main_list: list, possible_values: list) -> list:
     # old name - guess_possibleValues
     # this method good to call when after value added to the main grid or after new possible value list created
     # in this method we are going to clean the possible value list according to main grid
@@ -92,8 +98,9 @@ def remove_unnecessary_possible_values(main_list: list, possible_values: list) -
 
 
 # remove impossible values from the pvTemplate
-def removeIVF_pvTemplate(main_list: list, pv_list: list) -> list:
+def _advanced_possible_values_filter(main_list: list, pv_list: list) -> list:
     # new name - filter_possible_values
+    # new name - _advanced_possible_values_filter
 
     # description 1 - this is another major rule or strategy for set the values - when there possible value is uniq to its row , column or 3x3cel
     # even other possible values existed, then that uniq value is the value should be
@@ -193,9 +200,9 @@ def _count_possible_values(pv_list: list) -> int:
     return count
 
 
-def _insert_valuesWTOOPA(main_list: list, pv_list: list) -> list:
-    # insert values When There Only One Possible Value Available
-    # new name  - insert_single_values
+def _insert_single_values_to_main(main_list: list, pv_list: list) -> list:
+    # insert values to the main When There Only One Possible Value Available
+    # new name  - insert_single_values_to_main
     for i in range(0, 9):
         for j in range(0, 9):
             if len(pv_list[i][j]) == 1:
@@ -214,7 +221,7 @@ def _get_range(index: int) -> list:
         return [6, 7, 8]
 
 
-def _check_main_list_complete(main_list: list) -> bool:
+def _check_main_list_solved(main_list: list) -> bool:
     # this method to check actually main list got fixed
     # because possible values list count can goto 0 with bad suggestions and still main list can be not fixed
     # so this check the main list is there any o values, if there is its not fixed , if there isn't its fixed
@@ -251,8 +258,8 @@ def lets_brute_force(main_list: list, possible_values: list) -> list:
 
         for row in range(0, 9):
             for col in range(0, 9):
-
                 for possible_value in possible_values[row][col]:
+
                     if main_list[row][col] == 0:
                         _step_id = _step_id+1  # this will increase the step number
                         _brute_history.append(
@@ -261,11 +268,9 @@ def lets_brute_force(main_list: list, possible_values: list) -> list:
                         # making the suggestion without knowing right or wrong
                         main_list[row][col] = possible_value
                         # remove other possible values , those doesn't matter anymore
-                        possible_values[row][col] = possible_value
-                        possible_values = remove_unnecessary_possible_values(
-                            main_list, possible_values)  # cleaning up other possible values according to our change
+                        possible_values[row][col] = []
 
-                    break  # need to run one time
+                    break  # need to run one time or not !
 
         if (_track_back):
             for history in _brute_history:
