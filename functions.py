@@ -28,7 +28,7 @@ def _apply_basic_rules(main_list: list, possible_values: list):
         if before_count == after_count:
             if after_count != 0:
                 # sudoku is failed to solve
-                _result['is_pv_count_0'] = False
+                _result['is_possible_values_count_0'] = False
                 _result['is_solved'] = False
 
                 return _result
@@ -254,8 +254,6 @@ def lets_brute_force(main_list: list, possible_values: list) -> list:
 
     while 1 == 1:
 
-        _track_back = False
-
         for row in range(0, 9):
             for col in range(0, 9):
                 for possible_value in possible_values[row][col]:
@@ -270,11 +268,28 @@ def lets_brute_force(main_list: list, possible_values: list) -> list:
                         # remove other possible values , those doesn't matter anymore
                         possible_values[row][col] = []
 
-                    break  # need to run one time or not !
+                        _result = _apply_basic_rules(
+                            main_list, possible_values)
 
-        if (_track_back):
-            for history in _brute_history:
-                break
+                        if _result['is_solved']:
+                            return main_list
+
+                        if _result['is_possible_values_count_0'] == False:
+                            break
+
+                        # this 'is_possible_values_count_0' True
+                        while 1 == 1:
+                            current_data = _brute_history.pop()
+                            main_list = current_data[1]
+                            possible_values = current_data[2]
+                            if len(possible_values[row][col]) == 1:
+                                continue
+                            else:
+                                possible_values[row][col].remove(
+                                    possible_value)
+                                break
+
+                    break  # need to run one time or not !
 
         # main while loop stops only when possible values count become 0
         # this should be the end of the this method
