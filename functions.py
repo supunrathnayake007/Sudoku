@@ -324,3 +324,30 @@ def lets_brute_force(main_list: list, possible_values: list) -> list:
                 break
 
     return _result
+
+
+def _check_main_list_solved2(main_list) -> bool:
+    # lets check all the rows
+    for row in main_list:
+        # we should check column values have 1-9 without any order
+        # numbers in not in any order , and cant repeat
+        # if any number not in the list it return 0 - means puzzle is not truly fixed
+        # this method alone might be enough not surly knows that
+        if (1 and 2 and 3 and 4 and 5 and 6 and 7 and 8 and 9) not in row:
+            return False
+
+    # lest check all the columns
+    # this is wrong
+    for col in range(0, 9):
+        possible_values = [1, 2, 3, 4, 5, 6, 7, 8, 9]
+        for row in range(0, 9):
+            if len(possible_values) == 0:
+                break
+            # check the row values 1-9 , if its match remove that value in possible values list
+            # and go to next row , and with the removed values there no repeating values can exist
+            if row in possible_values:
+                possible_values.remove(row)
+            else:
+                return False
+
+    return 0
