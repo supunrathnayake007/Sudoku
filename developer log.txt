@@ -1,0 +1,13 @@
+#in this note latest updates in top
+
+23 november 18 - brute force method finished after 3 days work
+its seems now it can solve any sudoku 
+    need to update the api
+    maybe simplyfy the DB later
+
+intermediate level sudoku solved successfully (it took 4 days of thinking) 23*07*05
+
+other steps needed
+    sudoku have to save in sqlite db -Done
+    need a way to add new sudoku -Done
+    may be onaday web interface -Done

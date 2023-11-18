@@ -7,6 +7,9 @@ def solve_sudoku(my_list: list):
     possible_values = FunctionSupport.basic_grid_control.new_possible_values_grid()
     _result = _apply_basic_rules(my_list, possible_values)
 
+    _result = lets_brute_force(
+        _result['main_grid'], _result['possible_values'])
+
     return _result
 
 
@@ -31,7 +34,7 @@ def _apply_basic_rules(main_list: list, possible_values: list):
                 _result['is_possible_values_count_0'] = False
                 _result['is_solved'] = False
 
-                return _result
+                break
             else:
                 _result['is_pv_count_0'] = True
                 _result['is_solved'] = _check_main_list_solved(main_list)
@@ -233,30 +236,30 @@ def _check_main_list_solved(main_list: list) -> bool:
     return True
 
 
-# my_list = create_blankGrid()
-# my_list = add_clues(my_list)
-# print_myGrid(my_list)
-
-# pv_list = generate_pvTemplate()
-# my_list = solve_sudoku(my_list,pv_list)
-
-
-# print("")
-# print_myGrid(my_list)
-
-
 def lets_brute_force(main_list: list, possible_values: list) -> list:
     # in this list first (0) index is like column heder in table
     # and this is where im gonna track every step
-    _brute_history = ["step_id", "main_list", "possible_values",
-                      "suggesting value", "row_index", "column_index"]
-    _step_id = 0
 
+    # brute_history = ["step_id", "main_list", "possible_values","suggesting value", "row_index", "column_index"]
+    _brute_history = []
+    _step_id = 0
+    _result = dict()
+
+    # this while not necessary, let it be for now
     while 1 == 1:
+        break_row_loop = False
+        break_column_loop = False
 
         for row in range(0, 9):
             for col in range(0, 9):
+                selected_possible_value = 0
+
                 for possible_value in possible_values[row][col]:
+                    selected_possible_value = possible_value
+
+                    # not sure this necessary but doing it anyway for make sure
+                    if len(possible_values[row][col]) == 0:
+                        break
 
                     if main_list[row][col] == 0:
                         _step_id = _step_id+1  # this will increase the step number
@@ -266,34 +269,45 @@ def lets_brute_force(main_list: list, possible_values: list) -> list:
                         # making the suggestion without knowing right or wrong
                         main_list[row][col] = possible_value
                         # remove other possible values , those doesn't matter anymore
-                        possible_values[row][col] = []
+                        # _apply_basic_rules method do this anyway.
+                        # possible_values[row][col] = []
 
                         _result = _apply_basic_rules(
                             main_list, possible_values)
 
+                        # if _apply_basic_rules succeed return _result(it contains all the data needed)
                         if _result['is_solved']:
-                            return main_list
-
+                            return _result
+                        # at this point _apply_basic_rules failed, 'is_possible_values_count_0' false means -
+                        # another suggestion is need.so break possible values loop and goto next cell
                         if _result['is_possible_values_count_0'] == False:
                             break
 
-                        # this 'is_possible_values_count_0' True
-                        while 1 == 1:
-                            current_data = _brute_history.pop()
-                            main_list = current_data[1]
-                            possible_values = current_data[2]
-                            if len(possible_values[row][col]) == 1:
-                                continue
-                            else:
-                                possible_values[row][col].remove(
-                                    possible_value)
-                                break
+                        # this 'is_possible_values_count_0' True means - code made a bad suggestion
+                        # if it made a bad suggestion , remove that value from possible value list and start over again
+                        # no need remove that value here , because suggested value(bad value) already in _brute_history
+                        # when we popping _brute_history saved possible value is the bad value
+                        # at this point we need to stop row loop, column loop and pop data , update lists , remove bad value start over
+                        break_row_loop = True
+                        break_column_loop = True
+                    else:
+                        break  # if main grid have a value , break possible values loop
 
-                    break  # need to run one time or not !
+                if break_column_loop:
+                    break
+            if break_row_loop:
+                break
 
-        # main while loop stops only when possible values count become 0
+        recovered_data = _brute_history.pop
+        main_list = recovered_data[1]
+        possible_values = recovered_data[2]
+        # remove the suggested wrong value
+        possible_values = possible_values[recovered_data[4]][recovered_data[5]].remove(
+            recovered_data[3])
+
+        # main while loop stops only when puzzle is solved
         # this should be the end of the this method
-        if (_count_possible_values(possible_value) == 0):
-            return main_list
+        if (_result['is_solved']):
+            break
 
-    return [0]
+    return _result

@@ -68,8 +68,19 @@ while True:
             print()
             user_input = input('     >> ')
             if user_input.lower() == 's':
-                my_list = functions.solve_sudoku(my_list, True)
-                FunctionSupport.basic_grid_control.print_grid(my_list)
+                _result = functions.solve_sudoku(my_list)
+
+                if _result['is_solved']:
+                    print('SODOKU is Solved !!')
+                    print()
+                else:
+                    print('SODOKU is failed to Solved !!')
+                    FunctionSupport.basic_grid_control.print_possible_values(
+                        _result['possible_values'])
+                    print()
+                FunctionSupport.basic_grid_control.print_grid(
+                    _result['main_grid'])
+
                 print()
                 print('     B - Back')
                 print('     M - Main menu')
