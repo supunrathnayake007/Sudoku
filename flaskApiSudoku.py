@@ -1,6 +1,6 @@
 from flask import Flask, request, jsonify
 from flask_cors import CORS
-from sqliteAccess import SqliteAccess
+from DBAccess.sqliteAccess import SqliteAccess
 from sudokuDb_access import Sudoku_db
 import functions
 import json
@@ -67,11 +67,9 @@ def solve_sudoku():
     # sudoku_dataList = sudoku_data.split(',')
     # for i in sudoku_dataList:
     #    gridData[int(i[0])-1][int(i[1])-1] = int(i[2])
+    _result = functions.solve_sudoku(data)
 
-    pv_list = functions.generate_pvTemplate()
-    my_list = functions.solve_sudoku(data, pv_list, False)
-
-    return jsonify(my_list), 200
+    return jsonify(_result['main_grid']), 200
 
 
 if __name__ == "__main__":

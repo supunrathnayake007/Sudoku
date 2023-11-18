@@ -75,8 +75,13 @@ while True:
                     print()
                 else:
                     print('SODOKU is failed to Solved !!')
-                    FunctionSupport.basic_grid_control.print_possible_values(
-                        _result['possible_values'])
+                    # issue found - when printing possible values
+                    # seams when there no possible values code fails here
+                    if _result['is_possible_values_count_0'] == False:
+                        FunctionSupport.basic_grid_control.print_possible_values(
+                            _result['possible_values'])
+                    else:
+                        print('No more possible values, brute force Failed')
                     print()
                 FunctionSupport.basic_grid_control.print_grid(
                     _result['main_grid'])
@@ -84,6 +89,7 @@ while True:
                 print()
                 print('     B - Back')
                 print('     M - Main menu')
+                print()
             if user_input.lower() == 'm':
                 break
             if user_input.lower() == 'b':

@@ -7,8 +7,9 @@ def solve_sudoku(my_list: list):
     possible_values = FunctionSupport.basic_grid_control.new_possible_values_grid()
     _result = _apply_basic_rules(my_list, possible_values)
 
-    _result = lets_brute_force(
-        _result['main_grid'], _result['possible_values'])
+    if _result['is_solved'] == False:
+        _result = lets_brute_force(
+            _result['main_grid'], _result['possible_values'])
 
     return _result
 
@@ -36,7 +37,8 @@ def _apply_basic_rules(main_list: list, possible_values: list):
 
                 break
             else:
-                _result['is_pv_count_0'] = True
+                _result['is_possible_values_count_0'] = True
+                # _result['is_pv_count_0'] = True
                 _result['is_solved'] = _check_main_list_solved(main_list)
 
             break
@@ -290,6 +292,7 @@ def lets_brute_force(main_list: list, possible_values: list) -> list:
                         # at this point we need to stop row loop, column loop and pop data , update lists , remove bad value start over
                         break_row_loop = True
                         break_column_loop = True
+                        break
                     else:
                         break  # if main grid have a value , break possible values loop
 
@@ -298,16 +301,26 @@ def lets_brute_force(main_list: list, possible_values: list) -> list:
             if break_row_loop:
                 break
 
-        recovered_data = _brute_history.pop
-        main_list = recovered_data[1]
-        possible_values = recovered_data[2]
+        # issue found - need check there is data available to first
+        if len(_brute_history) > 0:
+            recovered_data = _brute_history.pop()
+            main_list = recovered_data[1]
+            possible_values = recovered_data[2]
         # remove the suggested wrong value
-        possible_values = possible_values[recovered_data[4]][recovered_data[5]].remove(
-            recovered_data[3])
+        # issue found - first solve the code issue
+        # before remove check that value exist
+        if recovered_data[3] in possible_values[recovered_data[4]][recovered_data[5]]:
+            possible_values = possible_values[recovered_data[4]][recovered_data[5]].remove(
+                recovered_data[3])
 
         # main while loop stops only when puzzle is solved
         # this should be the end of the this method
         if (_result['is_solved']):
             break
+
+        # issue found there is infinite loop - need a way to stop
+        if _result['is_solved'] == False:
+            if _result['is_possible_values_count_0']:
+                break
 
     return _result
