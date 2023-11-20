@@ -1,4 +1,5 @@
 import FunctionSupport.basic_grid_control
+from copy import deepcopy
 
 
 def solve_sudoku(my_list: list):
@@ -246,6 +247,7 @@ def lets_brute_force(main_list: list, possible_values: list) -> list:
     _brute_history = []
     _step_id = 0
     _result = dict()
+    number_of_suggestions = 0
 
     # this while not necessary, let it be for now
     while 1 == 1:
@@ -260,16 +262,17 @@ def lets_brute_force(main_list: list, possible_values: list) -> list:
                     selected_possible_value = possible_value
 
                     # not sure this necessary but doing it anyway for make sure
-                    if len(possible_values[row][col]) == 0:
-                        break
+                    # if len(possible_values[row][col]) == 0:
+                    #     break
 
                     if main_list[row][col] == 0:
                         _step_id = _step_id+1  # this will increase the step number
                         _brute_history.append(
-                            [_step_id, main_list, possible_values, possible_value, row, col])  # saving data before make change
+                            [deepcopy(_step_id), deepcopy(main_list), deepcopy(possible_values), deepcopy(possible_value), deepcopy(row), deepcopy(col)])  # saving data before make change
 
                         # making the suggestion without knowing right or wrong
                         main_list[row][col] = possible_value
+                        number_of_suggestions = number_of_suggestions+1
                         # remove other possible values , those doesn't matter anymore
                         # _apply_basic_rules method do this anyway.
                         # possible_values[row][col] = []
@@ -279,6 +282,8 @@ def lets_brute_force(main_list: list, possible_values: list) -> list:
 
                         # if _apply_basic_rules succeed return _result(it contains all the data needed)
                         if _result['is_solved']:
+                            # print('is_solved true , number_of_suggestions :' +
+                            #       str(number_of_suggestions))
                             return _result
                         # at this point _apply_basic_rules failed, 'is_possible_values_count_0' false means -
                         # another suggestion is need.so break possible values loop and goto next cell
@@ -310,8 +315,12 @@ def lets_brute_force(main_list: list, possible_values: list) -> list:
         # issue found - first solve the code issue
         # before remove check that value exist
         if recovered_data[3] in possible_values[recovered_data[4]][recovered_data[5]]:
-            possible_values = possible_values[recovered_data[4]][recovered_data[5]].remove(
-                recovered_data[3])
+            s_row = recovered_data[4]
+            s_col = recovered_data[5]
+            s_val = recovered_data[3]
+            possible_values[s_row][s_col].remove(s_val)
+            if _count_possible_values(possible_values) > 0:
+                _result['is_possible_values_count_0'] = False
 
         # main while loop stops only when puzzle is solved
         # this should be the end of the this method
@@ -321,8 +330,9 @@ def lets_brute_force(main_list: list, possible_values: list) -> list:
         # issue found there is infinite loop - need a way to stop
         if _result['is_solved'] == False:
             if _result['is_possible_values_count_0']:
-                break
+                continue
 
+    # print('number_of_suggestions :' + str(number_of_suggestions))
     return _result
 
 

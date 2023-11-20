@@ -79,7 +79,7 @@ while True:
                     # seams when there no possible values code fails here
                     if _result['is_possible_values_count_0'] == False:
                         FunctionSupport.basic_grid_control.print_possible_values(
-                            _result['possible_values'])
+                            _result['main_grid'], _result['possible_values'])
                     else:
                         print('No more possible values, brute force Failed')
                     print()
