@@ -3,6 +3,7 @@ from copy import deepcopy
 
 
 def solve_sudoku(my_list: list):
+    # to do - so far so good . can solve any sodoku but , need to identify invalid sudokus
     _result = dict()
 
     possible_values = FunctionSupport.basic_grid_control.new_possible_values_grid()
